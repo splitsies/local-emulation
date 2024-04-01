@@ -1,0 +1,19 @@
+{
+  "name": "local-emulation",
+  "version": "1.0.0",
+  "description": "Local service emulation utility for Splitsies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-db": "docker-compose -p splitsies-db up",
+    "recreate-db": "./recreate.sh",
+    "start-auth": "firebase emulators:start --only auth --export-on-exit ./firebase --import ./firebase",
+    "queue": "node ./queue-runner/queue-runner.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb-streams": "^3.540.0",
+    "@aws-sdk/client-lambda": "^3.540.0"
+  }
+}

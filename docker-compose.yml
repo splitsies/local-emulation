@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: splitsies-dynamodb
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  pg:
+    image: postgres:15.6-alpine
+    container_name: splitsies-pg
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./pg-tables.sql:/docker-entrypoint-initdb.d/init.sql
