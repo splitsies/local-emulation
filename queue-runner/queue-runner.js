@@ -73,7 +73,6 @@ const poll = async (shardId, streamArn) => {
 
         await Promise.all(invocationWorkers);
     } catch (e) {
-        console.error(e);
         shardIterators.set(shardId, undefined);
     }
 }
