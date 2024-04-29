@@ -55,18 +55,16 @@ const poll = async (shardId, streamArn) => {
             for (const endpoint of Object.keys(handlers)) {
                 const functions = handlers[endpoint];
                 const lambdaClient = clients.get(endpoint);
-                console.log({ endpoint, handlers });
                 for (const [func, queueName] of functions) {
                     const event = { ...result, Records: result.Records.filter(r => r.dynamodb.Keys.queueName.S === queueName) };
-                    console.log(JSON.stringify(event));
                     if (event.Records.length === 0) continue;
 
-                    console.log(`executing ${func} with payload: ${JSON.stringify(result, null, 2)}`);
+                    console.log(`executing ${func} with records`, result.Records);
                     invocationWorkers.push(lambdaClient.send(new InvokeCommand({
                         FunctionName: func,
                         InvocationType: 'RequestResponse',
                         Payload: JSON.stringify(event),
-                    })));
+                    })).catch(e => console.error(e)));
                 }
             }
         }
