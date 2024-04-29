@@ -72,6 +72,19 @@ aws dynamodb create-table \
     --endpoint-url http://localhost:8000
 
 
+# Notification Tables
+aws dynamodb create-table \
+    --table-name Splitsies-UserDeviceToken-local \
+    --attribute-definitions \
+        AttributeName=userId,AttributeType=S \
+        AttributeName=deviceToken,AttributeType=S \
+    --key-schema \
+        AttributeName=userId,KeyType=HASH \
+        AttributeName=deviceToken,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
 
 # Message Queue
 aws dynamodb create-table \
