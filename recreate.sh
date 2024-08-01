@@ -59,7 +59,29 @@ aws dynamodb create-table \
     --table-class STANDARD \
     --endpoint-url http://localhost:8000
 
+aws dynamodb create-table \
+    --table-name Splitsies-ExpensePayer-local \
+    --attribute-definitions \
+        AttributeName=expenseId,AttributeType=S \
+        AttributeName=userId,AttributeType=S \
+    --key-schema \
+        AttributeName=expenseId,KeyType=HASH \
+        AttributeName=userId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
 
+aws dynamodb create-table \
+    --table-name Splitsies-ExpensePayerStatus-local \
+    --attribute-definitions \
+        AttributeName=expenseId,AttributeType=S \
+        AttributeName=userId,AttributeType=S \
+    --key-schema \
+        AttributeName=expenseId,KeyType=HASH \
+        AttributeName=userId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
 
 
 # User Tables
