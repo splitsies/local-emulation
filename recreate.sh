@@ -1,4 +1,3 @@
-docker kill splitsies-pg
 docker kill splitsies-dynamodb
 
 rm -rf ./docker
@@ -6,6 +5,79 @@ rm -rf ./docker
 docker-compose -p splitsies-db up -d
 
 # Expense tables
+
+aws dynamodb create-table \
+    --table-name Splitsies-LeadingExpense-local \
+    --attribute-definitions \
+        AttributeName=userId,AttributeType=S \
+        AttributeName=transactionDateExpenseId,AttributeType=S \
+    --key-schema \
+        AttributeName=userId,KeyType=HASH \
+        AttributeName=transactionDateExpenseId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
+    --table-name Splitsies-Expense-local \
+    --attribute-definitions \
+        AttributeName=id,AttributeType=S \
+    --key-schema \
+        AttributeName=id,KeyType=HASH \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
+    --table-name Splitsies-ExpenseGroup-local \
+    --attribute-definitions \
+        AttributeName=parentExpenseId,AttributeType=S \
+        AttributeName=childExpenseId,AttributeType=S \
+    --key-schema \
+        AttributeName=parentExpenseId,KeyType=HASH \
+        AttributeName=childExpenseId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+# This index is a separate table as opposed to a GSI to enable transaction writes
+# spanning multiple tables
+aws dynamodb create-table \
+    --table-name Splitsies-ExpenseGroupChildIndex-local \
+    --attribute-definitions \
+        AttributeName=childExpenseId,AttributeType=S \
+        AttributeName=parentExpenseId,AttributeType=S \
+    --key-schema \
+        AttributeName=childExpenseId,KeyType=HASH \
+        AttributeName=parentExpenseId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
+    --table-name Splitsies-UserExpense-local \
+    --attribute-definitions \
+        AttributeName=expenseId,AttributeType=S \
+        AttributeName=userId,AttributeType=S \
+    --key-schema \
+        AttributeName=expenseId,KeyType=HASH \
+        AttributeName=userId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
+    --table-name Splitsies-UserExpenseUserIndex-local \
+    --attribute-definitions \
+        AttributeName=userId,AttributeType=S \
+        AttributeName=expenseId,AttributeType=S \
+    --key-schema \
+        AttributeName=userId,KeyType=HASH \
+        AttributeName=expenseId,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
 aws dynamodb create-table \
     --table-name Splitsies-ExpenseConnection-local \
     --attribute-definitions \
@@ -139,5 +211,4 @@ aws dynamodb create-table \
     --endpoint-url http://localhost:8000
 
 
-docker kill splitsies-pg
 docker kill splitsies-dynamodb
